@@ -23,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable long id)
+    public ResponseEntity<UserResponse> getUser(@PathVariable String id)
     {
         return userService.fetchUser(id)!=null?ResponseEntity.ok(userService.fetchUser(id)):ResponseEntity.notFound().build();
     }
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> upadteUser(@PathVariable long id,@RequestBody UserRequest updatedUser)
+    public ResponseEntity<String> upadteUser(@PathVariable String id,@RequestBody UserRequest updatedUser)
     {
         return userService.updateUser(id,updatedUser)?
                 ResponseEntity.ok("user updated successfully"):

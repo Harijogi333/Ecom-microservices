@@ -33,17 +33,15 @@ public class UserService {
     }
 
 
-    public UserResponse fetchUser(long id) {
+    public UserResponse fetchUser(String id) {
 
-        Optional<User> user=userRepository.findById(id);
-        if(user.isPresent())
-            return mapToUserResponse(user.get());
-        return null;
+        Optional<User> user=userRepository.findById(String.valueOf(id));
+        return user.map(this::mapToUserResponse).orElse(null);
     }
 
-    public boolean updateUser(long id,UserRequest updatedUser)
+    public boolean updateUser(String id,UserRequest updatedUser)
     {
-        return userRepository.findById(id)
+        return userRepository.findById(String.valueOf(id))
                 .map(user->
                         {
                             user.setFirstName(updatedUser.getFirstName());
