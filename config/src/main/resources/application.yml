@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: config
+  profiles:
+    active: native
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:///M:\New Projects\new\microservices\config\src\main\resources\configFile
+
+server:
+  port: 8888
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
