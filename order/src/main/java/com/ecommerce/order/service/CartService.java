@@ -1,6 +1,10 @@
 package com.ecommerce.order.service;
 
 
+import com.ecommerce.order.client.ProductServiceClient;
+import com.ecommerce.order.client.UserServiceClient;
+import com.ecommerce.order.dto.ProductResponse;
+import com.ecommerce.order.dto.UserResponse;
 import com.ecommerce.order.dto.cartItemRequest;
 import com.ecommerce.order.model.CartItem;
 import com.ecommerce.order.repository.CartItemRepository;
@@ -17,32 +21,24 @@ import java.util.Optional;
 @Transactional
 public class CartService {
 
-    //private final ProductRepository productRepository;
-    //private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
-
+    private final ProductServiceClient productServiceClient;
+    private final UserServiceClient userServiceClient;
 
     public boolean addToCart(String userId, cartItemRequest request) {
+        ProductResponse productResponse =productServiceClient.getProductDetailsById(request.getProductId());
 
-        /*Optional<Product> productOpt=productRepository.findById(request.getProductId());
-        if(productOpt.isEmpty())
+        if(productResponse==null || productResponse.getStockQuantity()<request.getQuantity())
         {
             return false;
         }
 
-        Product product=productOpt.get();
-        if(product.getStockQuantity()<request.getQuantity())
-        {
-            return  false;
-        }
+        UserResponse userResponse= userServiceClient.findUserById(userId);
 
-        Optional<User> userOpt=userRepository.findById(Long.valueOf(userId));
-        if(userOpt.isEmpty())
+        if(userResponse==null)
         {
             return false;
         }
-
-        User user=userOpt.get();*/
 
         CartItem existingCartItem=cartItemRepository.findByUserIdAndProductId(userId,request.getProductId().toString());
         if(existingCartItem!=null)
@@ -55,7 +51,7 @@ public class CartService {
 
             CartItem cartItem=new CartItem();
             cartItem.setProductId(request.getProductId());
-            cartItem.setUserId(Long.valueOf(userId));
+            cartItem.setUserId(userId);
             cartItem.setQuantity(request.getQuantity());
             cartItem.setPrice(BigDecimal.valueOf(1000));
             cartItemRepository.save(cartItem);

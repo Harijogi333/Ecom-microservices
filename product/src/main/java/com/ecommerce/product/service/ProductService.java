@@ -3,7 +3,7 @@ package com.ecommerce.product.service;
 
 import com.ecommerce.product.dto.ProductResponse;
 import com.ecommerce.product.model.Product;
-import com.ecommerce.product.model.ProductRequest;
+import com.ecommerce.product.dto.ProductRequest;
 import com.ecommerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -59,6 +59,13 @@ public class ProductService {
                 .collect(Collectors.toList());
 
     }
+
+    public Optional<ProductResponse> findById(Long id)
+    {
+        return productRepository.findByIdAndActiveTrue(id)
+                .map(this::mapToProductResponse);
+    }
+
 
 
     private ProductResponse mapToProductResponse(Product product)

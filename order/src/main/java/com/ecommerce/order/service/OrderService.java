@@ -47,7 +47,7 @@ public class OrderService {
         // create order
 
         Order order=new Order();
-        order.setUserId(Long.valueOf(userId));
+        order.setUserId(userId);
         order.setStatus(OrderStatus.CONFIRMED);
         order.setTotalAmount(totalPrice);
         List<OrderItem> orderItems=cartItems.stream().

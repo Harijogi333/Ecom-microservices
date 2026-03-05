@@ -1,7 +1,7 @@
 package com.ecommerce.product.controller;
 
 import com.ecommerce.product.dto.ProductResponse;
-import com.ecommerce.product.model.ProductRequest;
+import com.ecommerce.product.dto.ProductRequest;
 import com.ecommerce.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -49,6 +49,14 @@ public class ProductController {
     {
         boolean deleted= productService.deleteProduct(id);
         return deleted?ResponseEntity.noContent().build():ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable Long id)
+    {
+        return productService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(()->ResponseEntity.notFound().build());
     }
 
 }

@@ -17,7 +17,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long  userId;
+    private String  userId;
     private BigDecimal totalAmount;
     @Enumerated(EnumType.STRING)
     private OrderStatus status=OrderStatus.PENDING;

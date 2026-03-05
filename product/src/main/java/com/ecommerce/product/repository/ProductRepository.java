@@ -19,4 +19,5 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
      List<Product> searchProducts(@Param("word") String word);
 
      Optional<Product> findByIdAndActiveTrue(Long id);
+
 }
