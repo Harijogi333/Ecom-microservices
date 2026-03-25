@@ -40,7 +40,7 @@ public class CartService {
             return false;
         }
 
-        CartItem existingCartItem=cartItemRepository.findByUserIdAndProductId(userId,request.getProductId().toString());
+        CartItem existingCartItem=cartItemRepository.findByUserIdAndProductId(userId,request.getProductId());
         if(existingCartItem!=null)
         {
             existingCartItem.setQuantity(existingCartItem.getQuantity()+request.getQuantity());
@@ -65,9 +65,9 @@ public class CartService {
 
         //Optional<User> user=userRepository.findById(Long.valueOf(userId));
         //Optional<Product> product=productRepository.findById(productId);
-        if(/*user.isPresent() && product.isPresent() && */cartItemRepository.findByUserIdAndProductId(userId,productId.toString())!=null)
+        if(/*user.isPresent() && product.isPresent() && */cartItemRepository.findByUserIdAndProductId(userId,productId)!=null)
         {
-            cartItemRepository.deleteByUserIdAndProductId(userId,productId.toString());
+            cartItemRepository.deleteByUserIdAndProductId(userId,productId);
             return true;
         }
         return false;

@@ -31,6 +31,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUser(@PathVariable String id)
     {
+        System.out.println("Requested for User details");
         log.info("request recieved fro the user :{}",id);
         return userService.fetchUser(id)!=null?ResponseEntity.ok(userService.fetchUser(id)):ResponseEntity.notFound().build();
     }

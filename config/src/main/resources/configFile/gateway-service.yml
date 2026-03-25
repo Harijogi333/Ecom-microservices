@@ -1,0 +1,51 @@
+#spring:
+#  cloud:
+#    gateway:
+#      server:
+#        webflux:
+#          routes:
+#            - id: product-service
+#              uri: lb://product-service
+#              predicates:
+#                - Path=/api/products/**
+#
+#            - id: user-service
+#              uri: lb://user-service
+#              predicates:
+#                - Path=/api/users/**
+#
+#            - id: order-service
+#              uri: lb://order-service
+#              predicates:
+#                - Path=/api/orders/**
+#
+#            - id: cart-service
+#              uri: lb://order-service
+#              predicates:
+#                - Path=/api/cart/**
+#
+#            - id: eureka-service
+#              uri: http://localhost:8761
+#              predicates:
+#                - Path=/eureka/main
+#              filters:
+#                - SetPath=/
+#
+#            - id: eureka-service-static
+#              uri: http://localhost:8761
+#              predicates:
+#                - Path=/eureka/**
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
