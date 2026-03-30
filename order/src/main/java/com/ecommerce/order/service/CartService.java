@@ -8,6 +8,9 @@ import com.ecommerce.order.dto.UserResponse;
 import com.ecommerce.order.dto.cartItemRequest;
 import com.ecommerce.order.model.CartItem;
 import com.ecommerce.order.repository.CartItemRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,8 +27,15 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final ProductServiceClient productServiceClient;
     private final UserServiceClient userServiceClient;
+    int attempt=1;
 
+
+    //@CircuitBreaker(name="productService",fallbackMethod = "addToCartFallback")
+    @Retry(name="retryProduct",fallbackMethod = "addToCartFallback")
+    @RateLimiter(name = "rateLimitBreaker",fallbackMethod ="addToCartFallback")
     public boolean addToCart(String userId, cartItemRequest request) {
+
+        System.out.println("attempt no"+ ++attempt);
         ProductResponse productResponse =productServiceClient.getProductDetailsById(request.getProductId());
 
         if(productResponse==null || productResponse.getStockQuantity()<request.getQuantity())
@@ -60,6 +70,13 @@ public class CartService {
         return true;
 
     }
+
+    public boolean addToCartFallback(String userId, cartItemRequest request,Exception exception)
+    {
+        exception.printStackTrace();
+        return false;
+    }
+
 
     public boolean deleteCart(String userId, Long productId) {
 

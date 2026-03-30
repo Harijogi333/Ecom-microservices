@@ -27,6 +27,16 @@ management:
     web:
       exposure:
         include: "*"
+  endpoint:
+    health:
+      show-details: always
+      group:
+        default:
+          include: "*"
+  health:
+    circuitbreakers:
+      enabled: true
+
 eureka:
   client:
     serviceUrl:
@@ -36,3 +46,29 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: false
+
+
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      productService:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: count_based
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      retryProduct:
+        maxAttempts: 5
+        waitDuration: 1000ms
+  ratelimiter:
+    instances:
+      rateLimitBreaker:
+        limitForPeriod: 2
+        limitRefreshPeriod: 120s
+        timeoutDuration: 0
