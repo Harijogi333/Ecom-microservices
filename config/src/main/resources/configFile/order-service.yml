@@ -7,10 +7,12 @@ spring:
     username: ${DB_USER}
     password: ${DB_PASSWORD}
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+      host: ${RABBITMQ_HOST:localhost}
+      port: ${RABBITMQ_PORT:5672}
+      username: ${RABBITMQ_USERNAME:guest}
+      password: ${RABBITMQ_PASSWORD:guest}
+      virtual-host: ${RABBITMQ_VHOST:guest}
+      connection-timeout: 30000
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -69,6 +71,14 @@ resilience4j:
   ratelimiter:
     instances:
       rateLimitBreaker:
-        limitForPeriod: 2
+        limitForPeriod: 100
         limitRefreshPeriod: 120s
         timeoutDuration: 0
+
+rabbitmq:
+  exchange:
+    name: order.exchange
+  queue:
+    name: order.queue
+  routing:
+    key: order.tracking

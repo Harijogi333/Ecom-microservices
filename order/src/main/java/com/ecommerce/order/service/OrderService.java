@@ -1,5 +1,6 @@
 package com.ecommerce.order.service;
 
+import com.ecommerce.order.dto.OrderCreatedEventDto;
 import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.model.OrderStatus;
 import com.ecommerce.order.model.CartItem;
@@ -8,18 +9,30 @@ import com.ecommerce.order.model.OrderItem;
 import com.ecommerce.order.dto.OrderItemDto;
 import com.ecommerce.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
+    @Value("${rabbitmq.queue.name}")
+    private String queueName;
+    @Value("${rabbitmq.routing.key}")
+    private String keyName;
+    @Value("${rabbitmq.exchange.name}")
+    private String exchangeName;
+
     private final OrderRepository orderRepository;
     private final CartService cartService;
+    private final RabbitTemplate rabbitTemplate;
 
     public Optional<OrderResponse> createOrder(String userId) {
 
@@ -61,8 +74,24 @@ public class OrderService {
 
         cartService.clearCarts(userId);
 
+        OrderCreatedEventDto orderEvent=new OrderCreatedEventDto
+                (savedOrder.getId(),savedOrder.getUserId(),savedOrder.getStatus(),mapOrderItemToOrderItemDto(savedOrder.getItems()),savedOrder.getTotalAmount(),savedOrder.getCreatedAt());
+
+        rabbitTemplate.convertAndSend(exchangeName,keyName,orderEvent);
+
+
+
         return Optional.of(mapToOrderResponse(savedOrder));
 
+
+    }
+
+
+    private List<OrderItemDto> mapOrderItemToOrderItemDto(List<OrderItem> orderItems)
+    {
+        return orderItems.stream()
+                .map(order -> new OrderItemDto(order.getId(),order.getProductId().toString(),order.getQuantity(),order.getPrice(),order.getPrice().multiply(BigDecimal.valueOf(order.getQuantity()))))
+                .collect(Collectors.toList());
 
     }
 
