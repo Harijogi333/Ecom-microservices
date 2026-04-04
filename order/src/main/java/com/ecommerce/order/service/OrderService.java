@@ -11,6 +11,7 @@ import com.ecommerce.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,16 +24,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
 
-    @Value("${rabbitmq.queue.name}")
-    private String queueName;
-    @Value("${rabbitmq.routing.key}")
-    private String keyName;
-    @Value("${rabbitmq.exchange.name}")
-    private String exchangeName;
+//    @Value("${rabbitmq.queue.name}")
+//    private String queueName;
+//    @Value("${rabbitmq.routing.key}")
+//    private String keyName;
+//    @Value("${rabbitmq.exchange.name}")
+//    private String exchangeName;
 
     private final OrderRepository orderRepository;
     private final CartService cartService;
-    private final RabbitTemplate rabbitTemplate;
+//  private final RabbitTemplate rabbitTemplate;
+    private final StreamBridge streamBridge;
 
     public Optional<OrderResponse> createOrder(String userId) {
 
@@ -77,7 +79,8 @@ public class OrderService {
         OrderCreatedEventDto orderEvent=new OrderCreatedEventDto
                 (savedOrder.getId(),savedOrder.getUserId(),savedOrder.getStatus(),mapOrderItemToOrderItemDto(savedOrder.getItems()),savedOrder.getTotalAmount(),savedOrder.getCreatedAt());
 
-        rabbitTemplate.convertAndSend(exchangeName,keyName,orderEvent);
+//        rabbitTemplate.convertAndSend(exchangeName,keyName,orderEvent);
+        streamBridge.send("createOrder-out-0",orderEvent);
 
 
 
