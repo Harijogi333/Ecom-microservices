@@ -13,12 +13,16 @@ spring:
         createOrder-out-0:
           destination: order.exchange
           content-type: application/json
+      kafka:
+        binder:
+          broker: localhost:9092
 
-      rabbit:
-        bindings:
-          createOrder-out-0:
-            producer:
-              routing-key-expression: '''order.tracking'''
+
+#      rabbit:
+#        bindings:
+#          createOrder-out-0:
+#            producer:
+#              routing-key-expression: '''order.tracking'''
 
 
 
@@ -92,10 +96,10 @@ resilience4j:
         limitRefreshPeriod: 120s
         timeoutDuration: 0
 
-rabbitmq:
-  exchange:
-    name: order.exchange
-  queue:
-    name: order.queue
-  routing:
-    key: order.tracking
+#rabbitmq:
+#  exchange:
+#    name: order.exchange
+#  queue:
+#    name: order.queue
+#  routing:
+#    key: order.tracking
