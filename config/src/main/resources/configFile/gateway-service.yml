@@ -70,3 +70,10 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 3
         slidingWindowType: count_based
         automaticTransitionFromOpenToHalfOpenEnabled: true
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8443/realms/ecom-app

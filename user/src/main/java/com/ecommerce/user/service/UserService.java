@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final KeyClockAdminService keyClockAdminService;
 
     public List<UserResponse> fetchAllUsers()
     {
@@ -27,8 +28,12 @@ public class UserService {
 
     public UserResponse addUser(UserRequest user)
     {
-
-        User savedUser=userRepository.save(mapToUser(user));
+        String token=keyClockAdminService.getAccessToken();
+        String keyCloakId=keyClockAdminService.createUser(token,user);
+        keyClockAdminService.assignRoleToUser(user.getFirstName(),"user",keyCloakId);
+        User user1=mapToUser(user);
+        user1.setKeyCloakId(keyCloakId);
+        User savedUser=userRepository.save(user1);
         return mapToUserResponse(savedUser);
     }
 
@@ -78,6 +83,7 @@ public class UserService {
     {
         UserResponse userResponse=new UserResponse();
         userResponse.setId(user.getId());
+        userResponse.setKeyCloakId(user.getKeyCloakId());
         userResponse.setEmail(user.getEmail());
         userResponse.setPhone(user.getPhone());
         userResponse.setFirstName(user.getFirstName());

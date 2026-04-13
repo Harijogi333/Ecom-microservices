@@ -28,3 +28,12 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: false
+
+keycloak:
+  admin:
+    username: ecom-admin
+    password: 1234
+    server-url: http://localhost:8443
+    realm: ecom-app
+    clientId: admin-cli
+    clientUuid: a860bee5-d284-4c5b-8b94-c207c11e2681
